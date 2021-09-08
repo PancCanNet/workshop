@@ -24,3 +24,9 @@ In this workshop, we will use the developed PancCanNet workflows to showcase how
 **For each workflow:**
 - In the top right, select "Code" > "Download Rmd" file and open the file in RStudio.
 - Download and unzip [data.zip](https://github.com/panccannet/workshop/raw/main/workflows/data.zip) file in the same folder as the Rmd file.
+
+
+**Cytoscape introduction**
+If you are not yet familiar with Cytoscape, you can also follow the following introduction. If more people are interested, then I can go through this before the workflows. 
+- <a href="https://cytoscape.org/cytoscape-tutorials/presentations/intro-cytoscape-2021-ismb.html" target="_blank">Slides</a>
+- <a href="https://cytoscape.org/cytoscape-tutorials/protocols/rna-seq-data-analysis/#/" target="_blank">Practical</a>
