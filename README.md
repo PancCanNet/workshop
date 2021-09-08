@@ -15,7 +15,7 @@ In this workshop, we will use the developed PancCanNet workflows to showcase how
 
 | Title  | Link |
 |------|------|
-| Introduction workflows | [Slides](presentations/Workflows.pdf) |
+| Introduction workflows | [Slides](https://docs.google.com/presentation/d/1ojAFIh2ucuKnlXdziahX2tqaa8nMSsJd/edit#slide=id.ge2da9df36f_0_0) |
 | Workflow 1 - Pathway enrichment | [workflow](https://panccannet.github.io/workshop/workflows/workflow1.nb.html) |
 | Workflow 2 - PPI network | [workflow](https://panccannet.github.io/workshop/workflows/workflow2.nb.html) |
 | Workflow 2b - PPI network | [workflow](https://panccannet.github.io/workshop/workflows/workflow2b.nb.html) |
