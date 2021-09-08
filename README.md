@@ -1,6 +1,6 @@
 # PancCanNet workshop
 
-### Analysis workflows
+## Workshop 2: Analysis workflows
 
 _Date_: 9 September 2021<br/>
 _Organizer_: Martina Summer-Kutmon
