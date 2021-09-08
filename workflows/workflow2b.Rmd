@@ -1,0 +1,156 @@
+---
+title: "PancCanNet - Workflow 2"
+output: html_notebook
+author: "Martina Summer-Kutmon"
+date: "1 September 2021"
+version: 1.0
+license: "MIT License"
+---
+
+# General instructions (read before running the code snippets)
+In this second workflow, we will create a protein-protein interaction network of the up- and down-regulated genes in NanoString dataset (Folfirinox treatment). Afterwards, we will extend the network with gene-pathway associations to see in which pathways the differentially expressed genes are present in.
+
+* The script contains several code snippets which should be run one after the other. 
+* Make sure all the required packages are installed beforehand (BiocManager::install(...)). 
+* Make sure you have Cytoscape installed (version 3.8.0+) and running before you start running the script. 
+
+*** 
+
+# Setup
+
+Loading libraries
+```{r}
+options(connectionObserver = NULL)
+
+library(dplyr)
+library(rWikiPathways)
+library(RCy3)
+library(RColorBrewer)
+library(rstudioapi)
+library(readr)
+```
+
+```{r}
+setwd(dirname(getActiveDocumentContext()$path))
+```
+
+*** 
+
+## Load differential gene expression dataset
+
+Make sure you ran workflow 1 beforehand, so the differential gene expression file has been generated. 
+
+We take the series 1 from the following dataset (NHBE mock treated versus SARS-CoV-2 infected): 
+* https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE147507
+
+which is related to the following publication:
+
+Blanco-Melo, Daniel, et al. "Imbalanced host response to SARS-CoV-2 drives development of COVID-19." Cell 181.5 (2020): 1036-1045.
+
+```{r}
+dataset <- read.csv("data/DEG_TreatmentFOLFIRINOX.csv", header = TRUE)
+dataset$X <- gsub('-mRNA', '', dataset$X)
+
+# identifier mapping to Entrez Gene
+hgcn2entrez <- clusterProfiler::bitr(dataset$X, fromType = "SYMBOL",toType = c("ENTREZID","SYMBOL"), OrgDb = org.Hs.eg.db)
+data.mapped <- merge(dataset, hgcn2entrez, by.x="X", by.y="SYMBOL", all.x = TRUE)
+
+# filter genes without Entrez Gene identifier
+data <- data.mapped %>% tidyr::drop_na(ENTREZID)
+
+data.up <- unique(data[data$P.value < 0.05 & data$Log2.fold.change > 0.58, c(1,14)])
+data.down <- unique(data[data$P.value < 0.05 & data$Log2.fold.change < -0.58, c(1,14)])
+
+data.deg <- unique(data[data$P.value < 0.05 & abs(data$Log2.fold.change < 0.58), c(1,14)])
+
+```
+
+***
+
+## PPI network analysis
+
+Next, we will create a protein-protein interaction network with all differentially expressed genes using the STRING database. 
+
+```{r}
+#RCy3::cytoscapePing()
+#installApp('stringApp') 
+
+query <- format_csv(as.data.frame(data.deg$ENTREZID), col_names=F, quote_escape = "double", eol =",")
+commandsRun(paste0('string protein query cutoff=0.7 newNetName="PPI network" query="',query,'" limit=0'))
+
+# network will be opened in Cytoscape (this might take a while)
+```
+
+> Let's explore the network
+
+- **Q1**: How many of the differentially expressed genes were found in STRING?
+- **Q2**: Are all genes connected in the network? 
+- **Q3**: Change the confidence cutoff in the commandsRun call from 0.7 (high confidence) to 0.4 (medium confidence). What changes? 
+
+***
+
+## Data visualization
+
+Use the same visualization you created in workflow 1 to visualize the gene expression data on the network.
+
+```{r}
+loadTableData(data, data.key.column = "ENTREZID", table.key.column = "query term")
+
+RCy3::copyVisualStyle("default","ppi")
+RCy3::setNodeLabelMapping("display name", style.name="ppi")
+RCy3::lockNodeDimensions(TRUE, style.name="ppi")
+data.values<-c(-1,0,1) 
+node.colors <- c(rev(brewer.pal(length(data.values), "RdBu")))
+setNodeColorMapping("Log2.fold.change", data.values, node.colors, default.color = "#99FF99", style.name = "ppi")
+RCy3::setVisualStyle("ppi")
+RCy3::toggleGraphicsDetails()
+```
+
+> Interpretation
+
+- **Q4**: Do you see clusters of up- or down-regulated genes in the PPI network?
+
+***
+
+## Pathway information
+
+Next, we will add information about participation of the differentially expressed genes in molecular pathway models.
+
+```{r}
+# run CyTargetLinker
+
+wp <- file.path(getwd(), "data/wikipathways-hsa-20200710.xgmml")
+
+commandsRun(paste0('cytargetlinker extend idAttribute="query term" linkSetFiles="', wp, '"'))
+commandsRun('cytargetlinker applyLayout network="current"')
+commandsRun('cytargetlinker applyVisualstyle network="current"')
+RCy3::setNodeLabelMapping("display name", style.name="CyTargetLinker")
+
+# there is an issue in the latest version with visualization of the added edges - the workaround below solves this for now
+RCy3::cloneNetwork()
+RCy3::setVisualStyle("default")
+RCy3::setVisualStyle("CyTargetLinker")
+
+# TODO: VISUAL STYLE
+# too many pathway associations - better ways to group them is needed
+```
+
+> Interpretation
+
+- **Q5**: How many differentially expressed genes are in at least one of the pathways? 
+- **Q6**: Are the genes also functionally related based on the PPI network?
+
+***
+
+## Save Cytoscape output and session
+
+```{r}
+# Saving output
+png.file <- file.path(getwd(), "ppi-network.png")
+exportImage(png.file,'PNG', zoom = 500)
+cys.file <- file.path(getwd(), "ppi-network.cys")
+saveSession(cys.file) 
+
+#comment following line if you want to manipulate the visualization in Cytoscape
+RCy3::closeSession(save.before.closing = F)
+```
