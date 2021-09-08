@@ -5,5 +5,5 @@
 _Date_: 9 September 2021<br/>
 _Organizer_: Martina Summer-Kutmon
 
-### Preparation
+**Preparation**
 Follow the [installation instruction](Installation.md) to make sure you have all required software installed.
