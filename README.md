@@ -2,7 +2,7 @@
 
 ### Analysis workflows
 
-_Data_: 9 September 2021
+_Data_: 9 September 2021<br/>
 _Organizer_: Martina Summer-Kutmon
 
 ### Preparation
