@@ -13,12 +13,12 @@ In this workshop, we will use the developed PancCanNet workflows to showcase how
 
 ### Program
 | Title  | Link |
-|------|------|
+|:----:|------|
 | Introduction workflows | [Slides](presentations/Workflows.pdf) |
-| Workflow 1 | [workflow](https://panccannet.github.io/workshop/workflows/workflow1.nb.html) |
-| Workflow 2 | [workflow](https://panccannet.github.io/workshop/workflows/workflow2.nb.html) |
-| Workflow 2b | [workflow](https://panccannet.github.io/workshop/workflows/workflow2b.nb.html) |
-| Workflow 3 | [workflow]() 
+| Workflow 1 - Pathway enrichment | [workflow](https://panccannet.github.io/workshop/workflows/workflow1.nb.html) |
+| Workflow 2 - PPI network | [workflow](https://panccannet.github.io/workshop/workflows/workflow2.nb.html) |
+| Workflow 2b - PPI network | [workflow](https://panccannet.github.io/workshop/workflows/workflow2b.nb.html) |
+| Workflow 3 - Network diffusion analysis | [workflow]() 
 
 **For each workflow:**
 - In the top right, select "Code" > "Download Rmd" file and open the file in RStudio.
