@@ -19,6 +19,9 @@ In this workflow, we will run identify affected pathways in two pancreatic cance
 Loading libraries
 ```{r}
 options(connectionObserver = NULL)
+# uncomment if you need to install the libraries
+#BiocManager::install(c("GO.db","DO.db","readr","here","dplyr","tibble","clusterProfiler","org.Hs.eg.db","tidyverse","rWikiPathways","RCy3","RColorBrewer","EnhancedVolcano","reshape","data.table","svglite","VennDiagram","BridgeDbR","rstudioapi"))
+
 
 library(readr)
 library(here)
@@ -206,6 +209,9 @@ The pathways can then be visualized with the gene expression data as shown with 
 You can easily replace the WikiPathways identifier in line 209 with another pathway of interest and visualize the data on that pathway. 
 
 ```{r}
+RCy3::cytoscapePing()
+RCy3::installApp(c("wikipathways","CyTargetLinker"))
+
 RCy3::commandsRun('wikipathways import-as-pathway id=WP2877') 
 toggleGraphicsDetails()
 RCy3::mapTableColumn("Ensembl", "Homo sapiens", "Ensembl", "Entrez Gene")
